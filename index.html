@@ -15,29 +15,18 @@ body {
     color: #f0f0f0;
     overflow-x: hidden;
     background: #121212;
+    position: relative;
 }
 
-/* Multi-layered interactive smoke */
-.smoke-layer {
+/* Canvas fills background */
+#backgroundCanvas {
     position: fixed;
-    top: 0; left: 0;
-    width: 300%; height: 300%;
-    background: url('https://i.ibb.co/7YB7X6V/smoke.png') repeat;
-    background-size: cover;
-    opacity: 0.05;
+    top: 0;
+    left: 0;
     z-index: -1;
-    pointer-events: none;
-    transform: translate(0,0);
 }
 
-.smoke-layer.layer2 {
-    opacity: 0.03;
-}
-
-.smoke-layer.layer3 {
-    opacity: 0.02;
-}
-
+/* Calculator Container */
 .calculator-container {
     max-width: 700px;
     width: 90%;
@@ -56,7 +45,7 @@ h1 {
     font-weight: 700;
     margin-bottom: 35px;
     letter-spacing: 1px;
-    color: #19bf93; /* Teal now slightly greener */
+    color: #19bf93; /* Slightly greener teal */
     font-size: 2rem;
 }
 
@@ -95,7 +84,7 @@ button {
     margin-top: 30px;
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #19bf93, #0f9d7b); /* slightly greener */
+    background: linear-gradient(135deg, #19bf93, #0f9d7b);
     color: #000;
     font-size: 19px;
     font-weight: 700;
@@ -202,15 +191,11 @@ button:hover {
 .normal { color: #2ecc71; }
 .overweight { color: #f1c40f; }
 .obese { color: #e74c3c; }
-
 </style>
 </head>
-<body>
 
-<!-- Exaggerated interactive smoke layers -->
-<div class="smoke-layer layer1"></div>
-<div class="smoke-layer layer2"></div>
-<div class="smoke-layer layer3"></div>
+<body>
+<canvas id="backgroundCanvas"></canvas>
 
 <div class="calculator-container">
 
@@ -275,19 +260,98 @@ button:hover {
 </div>
 
 <script>
-// Smoke interaction on mouse movement
-const layer1 = document.querySelector('.layer1');
-const layer2 = document.querySelector('.layer2');
-const layer3 = document.querySelector('.layer3');
+// Canvas setup
+const canvas = document.getElementById('backgroundCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-document.addEventListener('mousemove', e => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 30; // range -15 to 15
-    const y = (e.clientY / window.innerHeight - 0.5) * 30;
-    layer1.style.transform = `translate(${x}px, ${y}px)`;
-    layer2.style.transform = `translate(${x*0.6}px, ${y*0.6}px)`;
-    layer3.style.transform = `translate(${x*0.3}px, ${y*0.3}px)`;
+let mouseX = 0, mouseY = 0;
+
+// Smoke layers
+const layers = [];
+const layerColors = ['rgba(25,191,147,0.05)','rgba(25,191,147,0.03)','rgba(255,255,255,0.02)'];
+for(let i=0;i<3;i++){
+    layers.push([]);
+    for(let j=0;j<30;j++){
+        layers[i].push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            radius: Math.random()*80+50,
+            speedX: Math.random()*0.2-0.1,
+            speedY: Math.random()*0.1+0.05, // slow upward drift
+            alpha: Math.random()*0.05+0.02
+        });
+    }
+}
+
+// Floating particles
+const particles = [];
+for(let i=0;i<80;i++){
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        size: Math.random()*30+20,
+        alpha: Math.random()*0.05+0.02,
+        speedX: Math.random()*0.5-0.25,
+        speedY: Math.random()*0.1+0.05 // slow upward
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Draw smoke layers
+    layers.forEach((layer,idx)=>{
+        layer.forEach(p=>{
+            p.x += p.speedX + (mouseX-canvas.width/2)*0.0003*(idx+1);
+            p.y -= p.speedY; // drift upward
+            if(p.x>canvas.width+100) p.x=-100;
+            if(p.x<-100) p.x=canvas.width+100;
+            if(p.y<-100) p.y=canvas.height+100;
+            const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.radius);
+            gradient.addColorStop(0, layerColors[idx]);
+            gradient.addColorStop(1,'rgba(25,191,147,0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+            ctx.fill();
+        });
+    });
+
+    // Draw floating particles
+    particles.forEach(p=>{
+        const dx = (mouseX - p.x)*0.001;
+        const dy = (mouseY - p.y)*0.001;
+        p.x += p.speedX + dx;
+        p.y -= p.speedY + dy; // upward drift
+        if(p.y<-50) p.y = canvas.height + 50;
+        if(p.x<-50) p.x = canvas.width + 50;
+        if(p.x>canvas.width+50) p.x=-50;
+        const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
+        gradient.addColorStop(0, `rgba(255,255,255,${p.alpha})`);
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+document.addEventListener('mousemove',e=>{
+    mouseX=e.clientX;
+    mouseY=e.clientY;
 });
 
+window.addEventListener('resize',()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+});
+
+// Calculator logic
 function calculateCalories() {
     const sex = document.getElementById('sex').value;
     const age = +document.getElementById('age').value;
@@ -332,6 +396,5 @@ function calculateCalories() {
     results.classList.add('show');
 }
 </script>
-
 </body>
 </html>
