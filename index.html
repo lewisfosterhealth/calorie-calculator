@@ -184,13 +184,14 @@ button:hover {
 <p><strong>Target Calories:</strong> <span id="target"></span> kcal/day</p>
 </div>
 
+<!-- Email capture -->
 <div class="email-capture" id="emailCapture">
 <p>Would you like some help getting those numbers right?</p>
 
 <iframe 
   src="https://docs.google.com/forms/d/e/1FAIpQLScdfL9GCQS6nyja0-XW1lOLiLWn8DgHlG1bqLcqAzDP4VIkHQ/viewform?embedded=true"
   width="100%" 
-  height="300" 
+  height="400" 
   frameborder="0">
 </iframe>
 
@@ -229,6 +230,7 @@ function calculateCalories() {
     document.getElementById('maint').textContent = maintenance;
     document.getElementById('target').textContent = target;
 
+    // Show results and email capture
     document.getElementById('results').style.display = 'block';
     document.getElementById('emailCapture').style.display = 'block';
 }
