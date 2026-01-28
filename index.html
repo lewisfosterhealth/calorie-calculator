@@ -191,6 +191,43 @@ button:hover {
 .normal { color: #2ecc71; }
 .overweight { color: #f1c40f; }
 .obese { color: #e74c3c; }
+
+/* Persistent website link */
+.persistent-link {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(25,191,147,0.9);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, background 0.3s ease;
+    animation: pulseGlow 2s infinite;
+}
+
+.persistent-link:hover {
+    background: #14a87a;
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Pulse glow animation */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,147,0.3);
+    }
+    50% {
+        box-shadow: 0 6px 15px rgba(0,0,0,0.5), 0 0 20px rgba(25,191,147,0.5);
+    }
+    100% {
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,147,0.3);
+    }
+}
 </style>
 </head>
 
@@ -259,8 +296,11 @@ button:hover {
 
 </div>
 
+<!-- Persistent link -->
+<a href="https://www.ebpt.co.uk" target="_blank" class="persistent-link">Lewis Foster Coach Website</a>
+
 <script>
-// Canvas setup
+// Canvas setup (smoke + shimmer particles)
 const canvas = document.getElementById('backgroundCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -279,13 +319,13 @@ for(let i=0;i<3;i++){
             y: Math.random()*canvas.height,
             radius: Math.random()*80+50,
             speedX: Math.random()*0.2-0.1,
-            speedY: Math.random()*0.1+0.05, // slow upward drift
+            speedY: Math.random()*0.1+0.05,
             alpha: Math.random()*0.05+0.02
         });
     }
 }
 
-// Floating particles
+// Floating particles with shimmer
 const particles = [];
 for(let i=0;i<80;i++){
     particles.push({
@@ -294,18 +334,19 @@ for(let i=0;i<80;i++){
         size: Math.random()*30+20,
         alpha: Math.random()*0.05+0.02,
         speedX: Math.random()*0.5-0.25,
-        speedY: Math.random()*0.1+0.05 // slow upward
+        speedY: Math.random()*0.1+0.05,
+        shimmer: Math.random()*0.03+0.02
     });
 }
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Draw smoke layers
+    // Smoke layers
     layers.forEach((layer,idx)=>{
         layer.forEach(p=>{
             p.x += p.speedX + (mouseX-canvas.width/2)*0.0003*(idx+1);
-            p.y -= p.speedY; // drift upward
+            p.y -= p.speedY;
             if(p.x>canvas.width+100) p.x=-100;
             if(p.x<-100) p.x=canvas.width+100;
             if(p.y<-100) p.y=canvas.height+100;
@@ -319,18 +360,20 @@ function animate(){
         });
     });
 
-    // Draw floating particles
+    // Shimmer particles
     particles.forEach(p=>{
+        p.alpha += (Math.random()*0.02 - 0.01);
+        p.alpha = Math.max(Math.min(p.alpha,0.08),0.02);
         const dx = (mouseX - p.x)*0.001;
         const dy = (mouseY - p.y)*0.001;
         p.x += p.speedX + dx;
-        p.y -= p.speedY + dy; // upward drift
+        p.y -= p.speedY + dy;
         if(p.y<-50) p.y = canvas.height + 50;
         if(p.x<-50) p.x = canvas.width + 50;
         if(p.x>canvas.width+50) p.x=-50;
         const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
         gradient.addColorStop(0, `rgba(255,255,255,${p.alpha})`);
-        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        gradient.addColorStop(1,'rgba(255,255,255,0)');
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
@@ -395,6 +438,14 @@ function calculateCalories() {
 
     results.classList.add('show');
 }
+
+// Floating persistent link effect
+const persistentLink = document.querySelector('.persistent-link');
+document.addEventListener('mousemove', (e) => {
+    const offsetX = (e.clientX - window.innerWidth / 2) * 0.02;
+    const offsetY = (e.clientY - window.innerHeight / 2) * 0.02;
+    persistentLink.style.transform = `translateX(calc(-50% + ${offsetX}px)) translateY(${offsetY}px)`;
+});
 </script>
 </body>
 </html>
