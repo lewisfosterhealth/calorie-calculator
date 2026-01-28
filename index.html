@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lewis Foster's Calorie Calculator</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -40,14 +40,26 @@ body {
     z-index: 1;
 }
 
+/* Premium shimmering main title */
 h1 {
     text-align: center;
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #19bf85, #0f9d72, #19bf85);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
     margin-bottom: 35px;
-    letter-spacing: 1px;
-    color: #19bf85; /* Slightly green teal */
-    font-size: 2rem;
-    text-shadow: 0 0 10px rgba(25,191,133,0.7);
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.4),
+        0 6px 10px rgba(0,0,0,0.2);
+    animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+    0% { background-position: -500% 0; }
+    100% { background-position: 500% 0; }
 }
 
 label {
@@ -294,70 +306,29 @@ button:hover {
 
 <script>
 // Canvas setup
-const canvas = document.getElementById('backgroundCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const canvas=document.getElementById('backgroundCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-let mouseX=0, mouseY=0;
-const layers=[]; 
+let mouseX=0,mouseY=0;
+const layers=[];
 const layerColors=['rgba(25,191,133,0.05)','rgba(25,191,133,0.03)','rgba(255,255,255,0.02)'];
-for(let i=0;i<3;i++){
-    layers.push([]);
-    for(let j=0;j<30;j++){
-        layers[i].push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,radius:Math.random()*80+50,speedX:Math.random()*0.2-0.1,speedY:Math.random()*0.1+0.05,alpha:Math.random()*0.05+0.02});
-    }
-}
+for(let i=0;i<3;i++){layers.push([]);for(let j=0;j<30;j++){layers[i].push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,radius:Math.random()*80+50,speedX:Math.random()*0.2-0.1,speedY:Math.random()*0.1+0.05,alpha:Math.random()*0.05+0.02});}}
 
 const particles=[];
-for(let i=0;i<80;i++){
-    particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*30+20,alpha:Math.random()*0.05+0.02,speedX:Math.random()*0.5-0.25,speedY:Math.random()*0.1+0.05});
-}
+for(let i=0;i<80;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*30+20,alpha:Math.random()*0.05+0.02,speedX:Math.random()*0.5-0.25,speedY:Math.random()*0.1+0.05});}
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    layers.forEach((layer,idx)=>{
-        layer.forEach(p=>{
-            p.x+=p.speedX+(mouseX-canvas.width/2)*0.0003*(idx+1);
-            p.y-=p.speedY;
-            if(p.x>canvas.width+100)p.x=-100;
-            if(p.x<-100)p.x=canvas.width+100;
-            if(p.y<-100)p.y=canvas.height+100;
-            const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.radius);
-            gradient.addColorStop(0, layerColors[idx]);
-            gradient.addColorStop(1,'rgba(25,191,133,0)');
-            ctx.fillStyle=gradient;
-            ctx.beginPath();
-            ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-            ctx.fill();
-        });
-    });
-
-    particles.forEach(p=>{
-        p.alpha += (Math.random()*0.02-0.01);
-        p.alpha=Math.max(Math.min(p.alpha,0.08),0.02);
-        const dx=(mouseX-p.x)*0.001;
-        const dy=(mouseY-p.y)*0.001;
-        p.x+=p.speedX+dx;
-        p.y-=p.speedY+dy;
-        if(p.y<-50)p.y=canvas.height+50;
-        if(p.x<-50)p.x=canvas.width+50;
-        if(p.x>canvas.width+50)p.x=-50;
-        const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
-        gradient.addColorStop(0, `rgba(255,255,255,${p.alpha})`);
-        gradient.addColorStop(1,'rgba(255,255,255,0)');
-        ctx.fillStyle=gradient;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-        ctx.fill();
-    });
-
+    layers.forEach((layer,idx)=>{layer.forEach(p=>{p.x+=p.speedX+(mouseX-canvas.width/2)*0.0003*(idx+1);p.y-=p.speedY;if(p.x>canvas.width+100)p.x=-100;if(p.x<-100)p.x=canvas.width+100;if(p.y<-100)p.y=canvas.height+100;const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.radius);gradient.addColorStop(0,layerColors[idx]);gradient.addColorStop(1,'rgba(25,191,133,0)');ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);ctx.fill();});});
+    particles.forEach(p=>{p.alpha+=(Math.random()*0.02-0.01);p.alpha=Math.max(Math.min(p.alpha,0.08),0.02);const dx=(mouseX-p.x)*0.001;const dy=(mouseY-p.y)*0.001;p.x+=p.speedX+dx;p.y-=p.speedY+dy;if(p.y<-50)p.y=canvas.height+50;if(p.x<-50)p.x=canvas.width+50;if(p.x>canvas.width+50)p.x=-50;const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);gradient.addColorStop(0,`rgba(255,255,255,${p.alpha})`);gradient.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
     requestAnimationFrame(animate);
 }
 animate();
 
-document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY});
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight});
+document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;persistentLink.style.transform=`translateX(calc(-50% + ${(mouseX-window.innerWidth/2)*0.02}px)) translateY(${(mouseY-window.innerHeight/2)*0.02}px)`;});
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
 // Calculator
 function calculateCalories(){
@@ -386,14 +357,6 @@ function calculateCalories(){
     marker.style.left=`calc(${leftPercent}% - 2px)`;
     results.classList.add('show');
 }
-
-// Floating persistent link effect
-const persistentLink=document.querySelector('.persistent-link');
-document.addEventListener('mousemove',(e)=>{
-    const offsetX=(e.clientX-window.innerWidth/2)*0.02;
-    const offsetY=(e.clientY-window.innerHeight/2)*0.02;
-    persistentLink.style.transform=`translateX(calc(-50% + ${offsetX}px)) translateY(${offsetY}px)`;
-});
 </script>
 </body>
 </html>
