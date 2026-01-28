@@ -45,8 +45,9 @@ h1 {
     font-weight: 700;
     margin-bottom: 35px;
     letter-spacing: 1px;
-    color: #19bf93; /* Slightly greener teal */
+    color: #19bf85; /* Slightly green teal */
     font-size: 2rem;
+    text-shadow: 0 0 10px rgba(25,191,133,0.7);
 }
 
 label {
@@ -75,8 +76,8 @@ input::placeholder {
 }
 
 input:focus, select:focus {
-    border-color: #19bf93;
-    box-shadow: 0 0 10px rgba(25,191,147,0.5);
+    border-color: #19bf85;
+    box-shadow: 0 0 12px rgba(25,191,133,0.5);
     outline: none;
 }
 
@@ -84,20 +85,21 @@ button {
     margin-top: 30px;
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #19bf93, #0f9d7b);
+    background: linear-gradient(135deg, #19bf85, #0f9d72);
     color: #000;
     font-size: 19px;
     font-weight: 700;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 10px rgba(25,191,133,0.4);
     transition: all 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-    background: linear-gradient(135deg, #14a87a, #0d7f65);
+    background: linear-gradient(135deg, #14a86b, #0d7f60);
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 0 20px rgba(25,191,133,0.7);
 }
 
 .results {
@@ -160,12 +162,12 @@ button:hover {
 }
 
 .contact-btn {
-    background: #19bf93;
+    background: #19bf85;
     color: #000;
 }
 
 .contact-btn:hover {
-    background: #14a87a;
+    background: #14a86b;
 }
 
 .whatsapp-btn {
@@ -177,7 +179,6 @@ button:hover {
     background: #1ebe5c;
 }
 
-/* Help text above buttons */
 .help-text {
     font-size: 1rem;
     font-weight: 600;
@@ -186,47 +187,44 @@ button:hover {
     color: #f0f0f0;
 }
 
-/* BMI status colors */
 .underweight { color: #f39c12; }
 .normal { color: #2ecc71; }
 .overweight { color: #f1c40f; }
 .obese { color: #e74c3c; }
 
-/* Persistent website link */
+/* Persistent link with glow and shimmer */
 .persistent-link {
     position: fixed;
     bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(25,191,147,0.9);
-    padding: 10px 20px;
+    background: rgba(25,191,133,0.9);
+    padding: 10px 22px;
     border-radius: 12px;
     font-weight: 700;
     text-decoration: none;
     color: #000;
     font-size: 16px;
     z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    transition: transform 0.3s ease, background 0.3s ease;
-    animation: pulseGlow 2s infinite;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,133,0.5);
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    animation: pulseGlow 2s infinite, shimmer 4s infinite linear;
 }
 
 .persistent-link:hover {
-    background: #14a87a;
+    background: #14a86b;
     transform: translateX(-50%) translateY(-2px);
 }
 
-/* Pulse glow animation */
 @keyframes pulseGlow {
-    0% {
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,147,0.3);
-    }
-    50% {
-        box-shadow: 0 6px 15px rgba(0,0,0,0.5), 0 0 20px rgba(25,191,147,0.5);
-    }
-    100% {
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,147,0.3);
-    }
+    0% { box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,133,0.3); }
+    50% { box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 0 20px rgba(25,191,133,0.6); }
+    100% { box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(25,191,133,0.3); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
 </style>
 </head>
@@ -235,7 +233,6 @@ button:hover {
 <canvas id="backgroundCanvas"></canvas>
 
 <div class="calculator-container">
-
 <h1>Lewis Foster's Calorie Calculator</h1>
 
 <label for="sex">Gender at Birth</label>
@@ -255,7 +252,7 @@ button:hover {
 
 <label for="activity">Activity Level</label>
 <select id="activity">
-    <option value="1.2">Sedentary (little or no exercise)</option>
+    <option value="1.2">Sedentary</option>
     <option value="1.375">Light (1–3 days/week)</option>
     <option value="1.55">Moderate (3–5 days/week)</option>
     <option value="1.725">Active (6–7 days/week)</option>
@@ -285,96 +282,71 @@ button:hover {
     <div class="bmi-gauge">
         <div class="bmi-marker" id="bmi-marker"></div>
     </div>
-
     <p class="help-text">Would you like some help getting those numbers right?</p>
-
     <div class="contact-buttons">
         <a href="https://ebpt.mypthub.net/auth/#contactform" target="_blank" class="contact-btn">Contact Form</a>
         <a href="https://wa.me/447789880293" target="_blank" class="whatsapp-btn">WhatsApp: 07789880293</a>
     </div>
 </div>
-
 </div>
 
-<!-- Persistent link -->
 <a href="https://www.ebpt.co.uk" target="_blank" class="persistent-link">Lewis Foster Coach Website</a>
 
 <script>
-// Canvas setup (smoke + shimmer particles)
+// Canvas setup
 const canvas = document.getElementById('backgroundCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let mouseX = 0, mouseY = 0;
-
-// Smoke layers
-const layers = [];
-const layerColors = ['rgba(25,191,147,0.05)','rgba(25,191,147,0.03)','rgba(255,255,255,0.02)'];
+let mouseX=0, mouseY=0;
+const layers=[]; 
+const layerColors=['rgba(25,191,133,0.05)','rgba(25,191,133,0.03)','rgba(255,255,255,0.02)'];
 for(let i=0;i<3;i++){
     layers.push([]);
     for(let j=0;j<30;j++){
-        layers[i].push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            radius: Math.random()*80+50,
-            speedX: Math.random()*0.2-0.1,
-            speedY: Math.random()*0.1+0.05,
-            alpha: Math.random()*0.05+0.02
-        });
+        layers[i].push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,radius:Math.random()*80+50,speedX:Math.random()*0.2-0.1,speedY:Math.random()*0.1+0.05,alpha:Math.random()*0.05+0.02});
     }
 }
 
-// Floating particles with shimmer
-const particles = [];
+const particles=[];
 for(let i=0;i<80;i++){
-    particles.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        size: Math.random()*30+20,
-        alpha: Math.random()*0.05+0.02,
-        speedX: Math.random()*0.5-0.25,
-        speedY: Math.random()*0.1+0.05,
-        shimmer: Math.random()*0.03+0.02
-    });
+    particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*30+20,alpha:Math.random()*0.05+0.02,speedX:Math.random()*0.5-0.25,speedY:Math.random()*0.1+0.05});
 }
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    // Smoke layers
     layers.forEach((layer,idx)=>{
         layer.forEach(p=>{
-            p.x += p.speedX + (mouseX-canvas.width/2)*0.0003*(idx+1);
-            p.y -= p.speedY;
-            if(p.x>canvas.width+100) p.x=-100;
-            if(p.x<-100) p.x=canvas.width+100;
-            if(p.y<-100) p.y=canvas.height+100;
-            const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.radius);
+            p.x+=p.speedX+(mouseX-canvas.width/2)*0.0003*(idx+1);
+            p.y-=p.speedY;
+            if(p.x>canvas.width+100)p.x=-100;
+            if(p.x<-100)p.x=canvas.width+100;
+            if(p.y<-100)p.y=canvas.height+100;
+            const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.radius);
             gradient.addColorStop(0, layerColors[idx]);
-            gradient.addColorStop(1,'rgba(25,191,147,0)');
-            ctx.fillStyle = gradient;
+            gradient.addColorStop(1,'rgba(25,191,133,0)');
+            ctx.fillStyle=gradient;
             ctx.beginPath();
             ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
             ctx.fill();
         });
     });
 
-    // Shimmer particles
     particles.forEach(p=>{
-        p.alpha += (Math.random()*0.02 - 0.01);
-        p.alpha = Math.max(Math.min(p.alpha,0.08),0.02);
-        const dx = (mouseX - p.x)*0.001;
-        const dy = (mouseY - p.y)*0.001;
-        p.x += p.speedX + dx;
-        p.y -= p.speedY + dy;
-        if(p.y<-50) p.y = canvas.height + 50;
-        if(p.x<-50) p.x = canvas.width + 50;
-        if(p.x>canvas.width+50) p.x=-50;
-        const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
+        p.alpha += (Math.random()*0.02-0.01);
+        p.alpha=Math.max(Math.min(p.alpha,0.08),0.02);
+        const dx=(mouseX-p.x)*0.001;
+        const dy=(mouseY-p.y)*0.001;
+        p.x+=p.speedX+dx;
+        p.y-=p.speedY+dy;
+        if(p.y<-50)p.y=canvas.height+50;
+        if(p.x<-50)p.x=canvas.width+50;
+        if(p.x>canvas.width+50)p.x=-50;
+        const gradient=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
         gradient.addColorStop(0, `rgba(255,255,255,${p.alpha})`);
         gradient.addColorStop(1,'rgba(255,255,255,0)');
-        ctx.fillStyle = gradient;
+        ctx.fillStyle=gradient;
         ctx.beginPath();
         ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
         ctx.fill();
@@ -384,67 +356,43 @@ function animate(){
 }
 animate();
 
-document.addEventListener('mousemove',e=>{
-    mouseX=e.clientX;
-    mouseY=e.clientY;
-});
+document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY});
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight});
 
-window.addEventListener('resize',()=>{
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-});
-
-// Calculator logic
-function calculateCalories() {
-    const sex = document.getElementById('sex').value;
-    const age = +document.getElementById('age').value;
-    const weight = +document.getElementById('weight').value;
-    const height = +document.getElementById('height').value;
-    const activity = +document.getElementById('activity').value;
-    const goal = document.getElementById('goal').value;
-    const rate = +document.getElementById('rate').value;
-
-    if(!age || !weight || !height || age <= 0 || weight <= 0 || height <= 0) {
-        alert("Please enter valid positive numbers for age, height, and weight.");
-        return;
-    }
-
-    let bmr = sex === 'male' ? (10*weight) + (6.25*height) - (5*age) + 5
-                             : (10*weight) + (6.25*height) - (5*age) - 161;
-
-    const maintenance = Math.round(bmr * activity);
-    let target = maintenance;
-    if(goal === 'lose') target -= rate;
-    if(goal === 'gain') target += rate;
-
-    const bmiValue = (weight / ((height/100)**2)).toFixed(1);
-    let status = '';
-    if(bmiValue < 18.5) status = 'Underweight';
-    else if(bmiValue < 25) status = 'Normal';
-    else if(bmiValue < 30) status = 'Overweight';
-    else status = 'Obese';
-
-    const results = document.getElementById('results');
-    document.getElementById('maint').textContent = maintenance;
-    document.getElementById('target').textContent = target;
-    const bmiStatus = document.getElementById('bmi-status');
-    document.getElementById('bmi').textContent = bmiValue;
-    bmiStatus.textContent = status;
-    bmiStatus.className = status.toLowerCase();
-
-    const marker = document.getElementById('bmi-marker');
-    const leftPercent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
-    marker.style.left = `calc(${leftPercent}% - 2px)`;
-
+// Calculator
+function calculateCalories(){
+    const sex=document.getElementById('sex').value;
+    const age=+document.getElementById('age').value;
+    const weight=+document.getElementById('weight').value;
+    const height=+document.getElementById('height').value;
+    const activity=+document.getElementById('activity').value;
+    const goal=document.getElementById('goal').value;
+    const rate=+document.getElementById('rate').value;
+    if(!age||!weight||!height||age<=0||weight<=0||height<=0){alert("Enter valid positive numbers");return;}
+    let bmr=sex==='male'?(10*weight)+(6.25*height)-(5*age)+5:(10*weight)+(6.25*height)-(5*age)-161;
+    const maintenance=Math.round(bmr*activity);
+    let target=maintenance;if(goal==='lose')target-=rate;if(goal==='gain')target+=rate;
+    const bmiValue=(weight/((height/100)**2)).toFixed(1);
+    let status='';if(bmiValue<18.5)status='Underweight';else if(bmiValue<25)status='Normal';else if(bmiValue<30)status='Overweight';else status='Obese';
+    const results=document.getElementById('results');
+    document.getElementById('maint').textContent=maintenance;
+    document.getElementById('target').textContent=target;
+    const bmiStatus=document.getElementById('bmi-status');
+    document.getElementById('bmi').textContent=bmiValue;
+    bmiStatus.textContent=status;
+    bmiStatus.className=status.toLowerCase();
+    const marker=document.getElementById('bmi-marker');
+    const leftPercent=Math.min(Math.max((bmiValue/50)*100,0),100);
+    marker.style.left=`calc(${leftPercent}% - 2px)`;
     results.classList.add('show');
 }
 
 // Floating persistent link effect
-const persistentLink = document.querySelector('.persistent-link');
-document.addEventListener('mousemove', (e) => {
-    const offsetX = (e.clientX - window.innerWidth / 2) * 0.02;
-    const offsetY = (e.clientY - window.innerHeight / 2) * 0.02;
-    persistentLink.style.transform = `translateX(calc(-50% + ${offsetX}px)) translateY(${offsetY}px)`;
+const persistentLink=document.querySelector('.persistent-link');
+document.addEventListener('mousemove',(e)=>{
+    const offsetX=(e.clientX-window.innerWidth/2)*0.02;
+    const offsetY=(e.clientY-window.innerHeight/2)*0.02;
+    persistentLink.style.transform=`translateX(calc(-50% + ${offsetX}px)) translateY(${offsetY}px)`;
 });
 </script>
 </body>
