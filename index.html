@@ -5,78 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lewis Foster's Calorie Calculator</title>
 
-<!-- Google Font for premium feel -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  body {
+body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     color: #f0f0f0;
     overflow-x: hidden;
     background: #121212;
-  }
+}
 
-  /* Multi-layered parallax smoke */
-  .smoke-layer {
+/* Multi-layered interactive smoke */
+.smoke-layer {
     position: fixed;
     top: 0; left: 0;
-    width: 200%; height: 200%;
+    width: 300%; height: 300%;
     background: url('https://i.ibb.co/7YB7X6V/smoke.png') repeat;
     background-size: cover;
     opacity: 0.05;
     z-index: -1;
-    animation: drift 120s linear infinite;
-  }
+    pointer-events: none;
+    transform: translate(0,0);
+}
 
-  .smoke-layer.layer2 {
+.smoke-layer.layer2 {
     opacity: 0.03;
-    animation-duration: 200s;
-    transform: rotate(180deg);
-  }
+}
 
-  .smoke-layer.layer3 {
+.smoke-layer.layer3 {
     opacity: 0.02;
-    animation-duration: 250s;
-  }
+}
 
-  @keyframes drift {
-    0% { transform: translate(0,0) rotate(0deg); }
-    100% { transform: translate(-50%, 50%) rotate(360deg); }
-  }
-
-  .calculator-container {
+.calculator-container {
     max-width: 700px;
     width: 90%;
     margin: 60px auto;
     background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
     position: relative;
     z-index: 1;
-  }
+}
 
-  h1 {
+h1 {
     text-align: center;
     font-weight: 700;
     margin-bottom: 35px;
     letter-spacing: 1px;
-    color: #19bfb7;
+    color: #19bf93; /* Teal now slightly greener */
     font-size: 2rem;
-  }
+}
 
-  label {
+label {
     font-weight: 600;
     margin-top: 20px;
     display: block;
     color: #f0f0f0;
     font-size: 1rem;
-  }
+}
 
-  input, select {
+input, select {
     width: 100%;
     padding: 14px;
     margin-top: 8px;
@@ -87,23 +79,23 @@
     color: #f0f0f0;
     box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
     transition: all 0.3s ease;
-  }
+}
 
-  input::placeholder {
+input::placeholder {
     color: #aaa;
-  }
+}
 
-  input:focus, select:focus {
-    border-color: #19bfb7;
-    box-shadow: 0 0 8px rgba(25,191,183,0.5);
+input:focus, select:focus {
+    border-color: #19bf93;
+    box-shadow: 0 0 10px rgba(25,191,147,0.5);
     outline: none;
-  }
+}
 
-  button {
+button {
     margin-top: 30px;
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #19bfb7, #0f9d9a);
+    background: linear-gradient(135deg, #19bf93, #0f9d7b); /* slightly greener */
     color: #000;
     font-size: 19px;
     font-weight: 700;
@@ -112,14 +104,14 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: all 0.3s ease, transform 0.2s ease;
-  }
+}
 
-  button:hover {
-    background: linear-gradient(135deg, #14a9a2, #0d7f7b);
+button:hover {
+    background: linear-gradient(135deg, #14a87a, #0d7f65);
     transform: translateY(-2px);
-  }
+}
 
-  .results {
+.results {
     margin-top: 30px;
     padding: 25px;
     background: #1a1a1a;
@@ -128,28 +120,28 @@
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease, transform 0.5s ease;
-  }
+}
 
-  .results.show {
+.results.show {
     opacity: 1;
     transform: translateY(0);
-  }
+}
 
-  .bmi {
+.bmi {
     font-weight: 600;
     margin-top: 15px;
-  }
+}
 
-  .bmi-gauge {
+.bmi-gauge {
     position: relative;
     height: 18px;
     background: linear-gradient(to right, #f39c12 0%, #f39c12 18.5%, #2ecc71 18.5%, #2ecc71 24.9%, #f1c40f 24.9%, #f1c40f 29.9%, #e74c3c 29.9%, #e74c3c 50%);
     border-radius: 10px;
     margin-top: 10px;
     overflow: hidden;
-  }
+}
 
-  .bmi-marker {
+.bmi-marker {
     position: absolute;
     top: -3px;
     width: 4px;
@@ -157,145 +149,187 @@
     background: #fff;
     border-radius: 2px;
     transition: left 1s ease;
-  }
+}
 
-  .back-btn {
+/* Contact buttons */
+.contact-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.contact-buttons a {
     display: block;
     text-align: center;
-    margin-top: 25px;
-    background: #f0f0f0;
-    color: #000;
     padding: 14px;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-weight: 700;
     text-decoration: none;
-    font-weight: 600;
+    font-size: 16px;
     transition: all 0.3s ease;
-  }
+}
 
-  .back-btn:hover {
-    background: #19bfb7;
+.contact-btn {
+    background: #19bf93;
     color: #000;
-  }
+}
 
-  /* BMI status colors */
-  .underweight { color: #f39c12; }
-  .normal { color: #2ecc71; }
-  .overweight { color: #f1c40f; }
-  .obese { color: #e74c3c; }
+.contact-btn:hover {
+    background: #14a87a;
+}
+
+.whatsapp-btn {
+    background: #25D366;
+    color: #fff;
+}
+
+.whatsapp-btn:hover {
+    background: #1ebe5c;
+}
+
+/* Help text above buttons */
+.help-text {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #f0f0f0;
+}
+
+/* BMI status colors */
+.underweight { color: #f39c12; }
+.normal { color: #2ecc71; }
+.overweight { color: #f1c40f; }
+.obese { color: #e74c3c; }
 
 </style>
 </head>
-
 <body>
 
-<!-- Multi-layered smoke -->
+<!-- Exaggerated interactive smoke layers -->
 <div class="smoke-layer layer1"></div>
 <div class="smoke-layer layer2"></div>
 <div class="smoke-layer layer3"></div>
 
 <div class="calculator-container">
 
-  <h1>Lewis Foster's Calorie Calculator</h1>
+<h1>Lewis Foster's Calorie Calculator</h1>
 
-  <label for="sex">Gender at Birth</label>
-  <select id="sex">
+<label for="sex">Gender at Birth</label>
+<select id="sex">
     <option value="male">Male</option>
     <option value="female">Female</option>
-  </select>
+</select>
 
-  <label for="age">Age</label>
-  <input type="number" id="age" placeholder="Enter your age" min="1">
+<label for="age">Age</label>
+<input type="number" id="age" placeholder="Enter your age" min="1">
 
-  <label for="height">Height (cm)</label>
-  <input type="number" id="height" placeholder="Enter your height in cm" min="1">
+<label for="height">Height (cm)</label>
+<input type="number" id="height" placeholder="Enter your height in cm" min="1">
 
-  <label for="weight">Weight (kg)</label>
-  <input type="number" id="weight" placeholder="Enter your weight in kg" min="1">
+<label for="weight">Weight (kg)</label>
+<input type="number" id="weight" placeholder="Enter your weight in kg" min="1">
 
-  <label for="activity">Activity Level</label>
-  <select id="activity">
+<label for="activity">Activity Level</label>
+<select id="activity">
     <option value="1.2">Sedentary (little or no exercise)</option>
     <option value="1.375">Light (1–3 days/week)</option>
     <option value="1.55">Moderate (3–5 days/week)</option>
     <option value="1.725">Active (6–7 days/week)</option>
     <option value="1.9">Very Active</option>
-  </select>
+</select>
 
-  <label for="goal">Goal</label>
-  <select id="goal">
+<label for="goal">Goal</label>
+<select id="goal">
     <option value="maintain">Maintain weight</option>
     <option value="lose">Lose fat</option>
     <option value="gain">Gain muscle</option>
-  </select>
+</select>
 
-  <label for="rate">Rate of Change</label>
-  <select id="rate">
+<label for="rate">Rate of Change</label>
+<select id="rate">
     <option value="250">Slow (0.25kg/week)</option>
     <option value="500">Moderate (0.5kg/week)</option>
     <option value="750">Aggressive (0.75kg/week)</option>
-  </select>
+</select>
 
-  <button onclick="calculateCalories()">Calculate Calories</button>
+<button onclick="calculateCalories()">Calculate Calories</button>
 
-  <div class="results" id="results">
+<div class="results" id="results">
     <p><strong>Maintenance Calories:</strong> <span id="maint"></span> kcal/day</p>
     <p><strong>Target Calories:</strong> <span id="target"></span> kcal/day</p>
     <p class="bmi"><strong>BMI:</strong> <span id="bmi"></span> <span id="bmi-status"></span></p>
     <div class="bmi-gauge">
-      <div class="bmi-marker" id="bmi-marker"></div>
+        <div class="bmi-marker" id="bmi-marker"></div>
     </div>
-  </div>
 
-  <a href="https://www.ebpt.co.uk" class="back-btn">← Back to Lewis Foster Health Coach Website</a>
+    <p class="help-text">Would you like some help getting those numbers right?</p>
+
+    <div class="contact-buttons">
+        <a href="https://ebpt.mypthub.net/auth/#contactform" target="_blank" class="contact-btn">Contact Form</a>
+        <a href="https://wa.me/447789880293" target="_blank" class="whatsapp-btn">WhatsApp: 07789880293</a>
+    </div>
+</div>
 
 </div>
 
 <script>
+// Smoke interaction on mouse movement
+const layer1 = document.querySelector('.layer1');
+const layer2 = document.querySelector('.layer2');
+const layer3 = document.querySelector('.layer3');
+
+document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 30; // range -15 to 15
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    layer1.style.transform = `translate(${x}px, ${y}px)`;
+    layer2.style.transform = `translate(${x*0.6}px, ${y*0.6}px)`;
+    layer3.style.transform = `translate(${x*0.3}px, ${y*0.3}px)`;
+});
+
 function calculateCalories() {
-  const sex = document.getElementById('sex').value;
-  const age = +document.getElementById('age').value;
-  const weight = +document.getElementById('weight').value;
-  const height = +document.getElementById('height').value;
-  const activity = +document.getElementById('activity').value;
-  const goal = document.getElementById('goal').value;
-  const rate = +document.getElementById('rate').value;
+    const sex = document.getElementById('sex').value;
+    const age = +document.getElementById('age').value;
+    const weight = +document.getElementById('weight').value;
+    const height = +document.getElementById('height').value;
+    const activity = +document.getElementById('activity').value;
+    const goal = document.getElementById('goal').value;
+    const rate = +document.getElementById('rate').value;
 
-  if(!age || !weight || !height || age <= 0 || weight <= 0 || height <= 0) {
-    alert("Please enter valid positive numbers for age, height, and weight.");
-    return;
-  }
+    if(!age || !weight || !height || age <= 0 || weight <= 0 || height <= 0) {
+        alert("Please enter valid positive numbers for age, height, and weight.");
+        return;
+    }
 
-  // BMR calculation based on gender at birth
-  let bmr = sex === 'male' ? (10*weight) + (6.25*height) - (5*age) + 5
-                           : (10*weight) + (6.25*height) - (5*age) - 161;
+    let bmr = sex === 'male' ? (10*weight) + (6.25*height) - (5*age) + 5
+                             : (10*weight) + (6.25*height) - (5*age) - 161;
 
-  const maintenance = Math.round(bmr * activity);
-  let target = maintenance;
-  if(goal === 'lose') target -= rate;
-  if(goal === 'gain') target += rate;
+    const maintenance = Math.round(bmr * activity);
+    let target = maintenance;
+    if(goal === 'lose') target -= rate;
+    if(goal === 'gain') target += rate;
 
-  // BMI
-  const bmiValue = (weight / ((height/100)**2)).toFixed(1);
-  let status = '';
-  if(bmiValue < 18.5) status = 'Underweight';
-  else if(bmiValue < 25) status = 'Normal';
-  else if(bmiValue < 30) status = 'Overweight';
-  else status = 'Obese';
+    const bmiValue = (weight / ((height/100)**2)).toFixed(1);
+    let status = '';
+    if(bmiValue < 18.5) status = 'Underweight';
+    else if(bmiValue < 25) status = 'Normal';
+    else if(bmiValue < 30) status = 'Overweight';
+    else status = 'Obese';
 
-  const results = document.getElementById('results');
-  document.getElementById('maint').textContent = maintenance;
-  document.getElementById('target').textContent = target;
-  const bmiStatus = document.getElementById('bmi-status');
-  document.getElementById('bmi').textContent = bmiValue;
-  bmiStatus.textContent = status;
-  bmiStatus.className = status.toLowerCase();
+    const results = document.getElementById('results');
+    document.getElementById('maint').textContent = maintenance;
+    document.getElementById('target').textContent = target;
+    const bmiStatus = document.getElementById('bmi-status');
+    document.getElementById('bmi').textContent = bmiValue;
+    bmiStatus.textContent = status;
+    bmiStatus.className = status.toLowerCase();
 
-  // BMI marker
-  const marker = document.getElementById('bmi-marker');
-  const leftPercent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
-  marker.style.left = `calc(${leftPercent}% - 2px)`;
+    const marker = document.getElementById('bmi-marker');
+    const leftPercent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
+    marker.style.left = `calc(${leftPercent}% - 2px)`;
 
-  results.classList.add('show');
+    results.classList.add('show');
 }
 </script>
 
