@@ -11,10 +11,39 @@
 <style>
   body {
     font-family: 'Inter', sans-serif;
-    background: #121212;
     margin: 0;
     padding: 0;
     color: #f0f0f0;
+    overflow-x: hidden;
+    background: #121212;
+  }
+
+  /* Multi-layered parallax smoke */
+  .smoke-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 200%; height: 200%;
+    background: url('https://i.ibb.co/7YB7X6V/smoke.png') repeat;
+    background-size: cover;
+    opacity: 0.05;
+    z-index: -1;
+    animation: drift 120s linear infinite;
+  }
+
+  .smoke-layer.layer2 {
+    opacity: 0.03;
+    animation-duration: 200s;
+    transform: rotate(180deg);
+  }
+
+  .smoke-layer.layer3 {
+    opacity: 0.02;
+    animation-duration: 250s;
+  }
+
+  @keyframes drift {
+    0% { transform: translate(0,0) rotate(0deg); }
+    100% { transform: translate(-50%, 50%) rotate(360deg); }
   }
 
   .calculator-container {
@@ -22,10 +51,12 @@
     width: 90%;
     margin: 60px auto;
     background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    position: relative;
+    z-index: 1;
   }
 
   h1 {
@@ -109,7 +140,6 @@
     margin-top: 15px;
   }
 
-  /* BMI Gauge */
   .bmi-gauge {
     position: relative;
     height: 18px;
@@ -126,7 +156,7 @@
     height: 24px;
     background: #fff;
     border-radius: 2px;
-    transition: left 0.5s ease;
+    transition: left 1s ease;
   }
 
   .back-btn {
@@ -147,16 +177,27 @@
     color: #000;
   }
 
+  /* BMI status colors */
+  .underweight { color: #f39c12; }
+  .normal { color: #2ecc71; }
+  .overweight { color: #f1c40f; }
+  .obese { color: #e74c3c; }
+
 </style>
 </head>
 
 <body>
 
+<!-- Multi-layered smoke -->
+<div class="smoke-layer layer1"></div>
+<div class="smoke-layer layer2"></div>
+<div class="smoke-layer layer3"></div>
+
 <div class="calculator-container">
 
   <h1>Lewis Foster's Calorie Calculator</h1>
 
-  <label for="sex">Sex</label>
+  <label for="sex">Gender at Birth</label>
   <select id="sex">
     <option value="male">Male</option>
     <option value="female">Female</option>
@@ -224,51 +265,34 @@ function calculateCalories() {
     return;
   }
 
-  // Calculate BMR
-  let bmr;
-  if(sex === 'male') {
-    bmr = (10*weight) + (6.25*height) - (5*age) + 5;
-  } else {
-    bmr = (10*weight) + (6.25*height) - (5*age) - 161;
-  }
+  // BMR calculation based on gender at birth
+  let bmr = sex === 'male' ? (10*weight) + (6.25*height) - (5*age) + 5
+                           : (10*weight) + (6.25*height) - (5*age) - 161;
 
   const maintenance = Math.round(bmr * activity);
   let target = maintenance;
-
   if(goal === 'lose') target -= rate;
   if(goal === 'gain') target += rate;
 
-  // Calculate BMI
+  // BMI
   const bmiValue = (weight / ((height/100)**2)).toFixed(1);
   let status = '';
-  let statusClass = '';
+  if(bmiValue < 18.5) status = 'Underweight';
+  else if(bmiValue < 25) status = 'Normal';
+  else if(bmiValue < 30) status = 'Overweight';
+  else status = 'Obese';
 
-  if(bmiValue < 18.5) { 
-    status = 'Underweight'; 
-    statusClass = 'underweight';
-  } else if(bmiValue < 25) { 
-    status = 'Normal'; 
-    statusClass = 'normal';
-  } else if(bmiValue < 30) { 
-    status = 'Overweight'; 
-    statusClass = 'overweight';
-  } else { 
-    status = 'Obese'; 
-    statusClass = 'obese';
-  }
-
-  // Display results
   const results = document.getElementById('results');
   document.getElementById('maint').textContent = maintenance;
   document.getElementById('target').textContent = target;
-  document.getElementById('bmi').textContent = bmiValue;
   const bmiStatus = document.getElementById('bmi-status');
+  document.getElementById('bmi').textContent = bmiValue;
   bmiStatus.textContent = status;
-  bmiStatus.className = statusClass;
+  bmiStatus.className = status.toLowerCase();
 
-  // Position BMI marker (0-50 BMI scale)
+  // BMI marker
   const marker = document.getElementById('bmi-marker');
-  let leftPercent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
+  const leftPercent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
   marker.style.left = `calc(${leftPercent}% - 2px)`;
 
   results.classList.add('show');
