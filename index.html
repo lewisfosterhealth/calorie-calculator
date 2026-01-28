@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+/* BODY & SMOKE BACKGROUND */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
@@ -17,23 +18,15 @@ body {
     position: relative;
 }
 
-/* Smoke background */
-body::before {
-    content: '';
+/* Smoke animation overlay */
+#smokeCanvas {
     position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: url('https://i.ibb.co/xh1Z3R2/smoke.png') repeat;
-    background-size: cover;
-    opacity: 0.05;
-    animation: smokeMove 60s linear infinite;
-    z-index: 0;
-}
-@keyframes smokeMove {
-    0% { transform: translate(0,0) rotate(0deg); }
-    100% { transform: translate(50px,50px) rotate(360deg); }
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
 }
 
 /* Calculator container */
@@ -147,6 +140,13 @@ button:hover {
     margin-bottom: 20px;
 }
 
+/* Form wrapper black background */
+.form-wrapper {
+    background: #111;
+    padding: 10px;
+    border-radius: 12px;
+}
+
 /* Persistent website link */
 .persistent-link {
     position: fixed;
@@ -173,6 +173,7 @@ button:hover {
 </head>
 
 <body>
+<canvas id="smokeCanvas"></canvas>
 
 <div class="calculator-container">
 <h1>Lewis Foster Coach : Free Calorie Calculator</h1>
@@ -227,13 +228,15 @@ button:hover {
 <div class="email-capture" id="emailCapture">
 <p>Would you like some help getting those numbers right?</p>
 
+<div class="form-wrapper">
 <iframe 
   src="https://docs.google.com/forms/d/e/1FAIpQLScdfL9GCQS6nyja0-XW1lOLiLWn8DgHlG1bqLcqAzDP4VIkHQ/viewform?embedded=true"
   width="100%" 
   height="400" 
-  frameborder="0">
+  frameborder="0"
+  style="border-radius:8px; background:#111;">
 </iframe>
-
+</div>
 </div>
 </div>
 
@@ -242,6 +245,7 @@ Lewis Foster Coach Website
 </a>
 
 <script>
+// CALCULATOR
 function calculateCalories() {
     const sex = document.getElementById('sex').value;
     const age = +document.getElementById('age').value;
@@ -256,7 +260,6 @@ function calculateCalories() {
         return;
     }
 
-    // BMR and calories
     let bmr = sex === 'male'
         ? (10 * weight + 6.25 * height - 5 * age + 5)
         : (10 * weight + 6.25 * height - 5 * age - 161);
@@ -270,15 +273,55 @@ function calculateCalories() {
     document.getElementById('maint').textContent = maintenance;
     document.getElementById('target').textContent = target;
 
-    // Show BMI bar
+    // Show BMI
     const bmi = weight / ((height/100) ** 2);
-    const bmiPercent = Math.min((bmi/40)*100, 100); // Max width 100%
+    const bmiPercent = Math.min((bmi/40)*100, 100);
     document.getElementById('bmiFill').style.width = bmiPercent + '%';
 
-    // Show results and form
+    // Show results + form
     document.getElementById('results').style.display = 'block';
     document.getElementById('emailCapture').style.display = 'block';
 }
+
+// SMOKE EFFECT
+const canvas = document.getElementById('smokeCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const smokeParticles = [];
+for(let i=0;i<150;i++){
+    smokeParticles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        radius: 30+Math.random()*70,
+        alpha: 0.02+Math.random()*0.05,
+        speed: 0.2+Math.random()*0.5
+    });
+}
+
+function animateSmoke(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    smokeParticles.forEach(p=>{
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+        ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+        ctx.fill();
+        p.y -= p.speed;
+        p.x += Math.sin(Date.now()/1000+p.y)*0.2;
+        if(p.y + p.radius < 0){
+            p.y = canvas.height + p.radius;
+            p.x = Math.random()*canvas.width;
+        }
+    });
+    requestAnimationFrame(animateSmoke);
+}
+animateSmoke();
+
+window.addEventListener('resize', ()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 
 </body>
