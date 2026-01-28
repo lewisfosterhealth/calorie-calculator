@@ -4,85 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lewis Foster Coach : Free Calorie Calculator</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-/* BODY AND SMOKE BACKGROUND */
 body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    color: #f1f1f1;
-    overflow-x: hidden;
-    position: relative;
-    background: #0e0e0e;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: #f1f1f1;
+  overflow-x: hidden;
+  background: #0e0e0e;
+  position: relative;
 }
 
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: url('https://i.ibb.co/fk7gWZn/smoke-loop.gif') center/cover no-repeat;
-    opacity: 0.08; /* adjust smoke visibility */
-    z-index: 0;
-    pointer-events: none;
+/* Smoke video background */
+#smokeBG {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:0.1;
+  z-index:0;
+  pointer-events:none;
 }
 
 /* Calculator container */
 .calculator-container {
-    max-width: 720px;
-    margin: 60px auto 120px;
-    padding: 40px;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(10px);
-    border-radius: 18px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-    position: relative;
-    z-index: 1;
+  max-width:720px;
+  margin:60px auto 120px;
+  padding:40px;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(10px);
+  border-radius:18px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.7);
+  position: relative;
+  z-index:2;
 }
 
-/* Premium shimmering main title */
+/* Shimmering title */
 h1 {
-    text-align: center;
-    font-weight: 800;
-    font-size: 2.4rem;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg, #1fcf8f, #0fa36f, #1fcf8f);
-    background-size: 400% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 6s linear infinite;
-    margin-bottom: 35px;
+  text-align:center;
+  font-weight:800;
+  font-size:2.4rem;
+  letter-spacing:2px;
+  background: linear-gradient(90deg, #1fcf8f, #0fa36f, #1fcf8f);
+  background-size: 400% 100%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation: shine 6s linear infinite;
+  margin-bottom:35px;
 }
-@keyframes shine {
-    from { background-position: 0% }
-    to { background-position: 400% }
-}
+@keyframes shine { from { background-position:0% } to { background-position:400% } }
 
 label { display:block; margin-top:18px; font-weight:600; }
 input, select {
-    width:100%; padding:14px; margin-top:6px;
-    background:#141414; color:#fff; border:1px solid #333;
-    border-radius:8px; font-size:16px;
+  width:100%; padding:14px; margin-top:6px;
+  background:#141414; color:#fff; border:1px solid #333;
+  border-radius:8px; font-size:16px;
 }
 input:focus, select:focus { outline:none; border-color:#1fcf8f; box-shadow:0 0 8px rgba(31,207,143,0.4); }
 
 button {
-    margin-top:30px; width:100%; padding:16px;
-    background: linear-gradient(135deg, #1fcf8f, #0fa36f);
-    color:#000; border:none; border-radius:12px;
-    font-size:18px; font-weight:700; cursor:pointer;
+  margin-top:30px; width:100%; padding:16px;
+  background: linear-gradient(135deg, #1fcf8f, #0fa36f);
+  color:#000; border:none; border-radius:12px;
+  font-size:18px; font-weight:700; cursor:pointer;
 }
 button:hover { opacity:0.9; }
 
-/* Results */
 .results {
-    margin-top: 30px; padding:25px; background:#111; border-radius:14px;
-    display:none;
+  margin-top:30px; padding:25px; background:#111; border-radius:14px;
+  display:none;
 }
 
-/* BMI Bar */
+/* BMI bar */
 .bmi-bar { margin-top:15px; height:16px; width:100%; background:#333; border-radius:8px; overflow:hidden; }
 .bmi-fill { height:100%; width:0%; background:#1fcf8f; border-radius:8px; transition: width 1s ease; }
 
@@ -93,16 +86,21 @@ button:hover { opacity:0.9; }
 
 /* Persistent link */
 .persistent-link {
-    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-    background: rgba(31,207,143,0.95); color:#000; padding:12px 22px;
-    border-radius:14px; font-weight:700; text-decoration:none;
-    box-shadow:0 0 20px rgba(31,207,143,0.6);
-    animation: pulse 2s infinite ease-in-out; z-index:999;
+  position: fixed; bottom:15px; left:50%; transform:translateX(-50%);
+  background: rgba(31,207,143,0.95); color:#000; padding:12px 22px;
+  border-radius:14px; font-weight:700; text-decoration:none;
+  box-shadow:0 0 20px rgba(31,207,143,0.6);
+  animation: pulse 2s infinite ease-in-out; z-index:999;
 }
-@keyframes pulse { 0% {box-shadow:0 0 12px rgba(31,207,143,0.4);} 50%{box-shadow:0 0 28px rgba(31,207,143,0.7);} 100%{box-shadow:0 0 12px rgba(31,207,143,0.4);} }
+@keyframes pulse { 0%{box-shadow:0 0 12px rgba(31,207,143,0.4);} 50%{box-shadow:0 0 28px rgba(31,207,143,0.7);} 100%{box-shadow:0 0 12px rgba(31,207,143,0.4);} }
 </style>
 </head>
 <body>
+
+<!-- Smoke video background -->
+<video autoplay muted loop id="smokeBG">
+  <source src="https://i.ibb.co/5sX7nTc/smoke-video.mp4" type="video/mp4">
+</video>
 
 <div class="calculator-container">
 <h1>Lewis Foster Coach : Free Calorie Calculator</h1>
@@ -140,11 +138,9 @@ button:hover { opacity:0.9; }
 <p><strong>Maintenance Calories:</strong> <span id="maint"></span> kcal/day</p>
 <p><strong>Target Calories:</strong> <span id="target"></span> kcal/day</p>
 
-<!-- BMI Bar -->
 <div class="bmi-bar"><div id="bmiFill" class="bmi-fill"></div></div>
 </div>
 
-<!-- Email capture -->
 <div class="email-capture" id="emailCapture">
 <p>Would you like some help getting those numbers right?</p>
 <div class="form-wrapper">
@@ -156,7 +152,6 @@ button:hover { opacity:0.9; }
 <a href="https://www.ebpt.co.uk" class="persistent-link">Lewis Foster Coach Website</a>
 
 <script>
-// Calculator function
 function calculateCalories(){
     const sex = document.getElementById('sex').value;
     const age = +document.getElementById('age').value;
@@ -177,12 +172,10 @@ function calculateCalories(){
     document.getElementById('maint').textContent = maintenance;
     document.getElementById('target').textContent = target;
 
-    // BMI bar
     const bmi = weight / ((height/100)**2);
     const bmiPercent = Math.min((bmi/40)*100,100);
     document.getElementById('bmiFill').style.width = bmiPercent + '%';
 
-    // Show results and form
     document.getElementById('results').style.display='block';
     document.getElementById('emailCapture').style.display='block';
 }
