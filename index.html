@@ -8,22 +8,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+/* BODY AND SMOKE BACKGROUND */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #0e0e0e;
     color: #f1f1f1;
     overflow-x: hidden;
     position: relative;
+    background: #0e0e0e;
 }
 
-/* Smoke canvas */
-#smokeCanvas {
+body::before {
+    content: "";
     position: fixed;
-    top: 0; left:0;
+    top: 0; left: 0;
     width: 100%; height: 100%;
-    z-index:0;
-    pointer-events:none;
+    background: url('https://i.ibb.co/fk7gWZn/smoke-loop.gif') center/cover no-repeat;
+    opacity: 0.08; /* adjust smoke visibility */
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* Calculator container */
@@ -39,7 +42,7 @@ body {
     z-index: 1;
 }
 
-/* Shimmer title */
+/* Premium shimmering main title */
 h1 {
     text-align: center;
     font-weight: 800;
@@ -101,8 +104,6 @@ button:hover { opacity:0.9; }
 </head>
 <body>
 
-<canvas id="smokeCanvas"></canvas>
-
 <div class="calculator-container">
 <h1>Lewis Foster Coach : Free Calorie Calculator</h1>
 
@@ -155,44 +156,6 @@ button:hover { opacity:0.9; }
 <a href="https://www.ebpt.co.uk" class="persistent-link">Lewis Foster Coach Website</a>
 
 <script>
-// Smoke effect with visible alpha and blur
-const canvas = document.getElementById('smokeCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const smokeParticles = [];
-for(let i=0;i<120;i++){
-    smokeParticles.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        radius: 50 + Math.random()*100,
-        alpha: 0.05 + Math.random()*0.15,
-        speed: 0.2 + Math.random()*0.5
-    });
-}
-
-function animateSmoke(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    smokeParticles.forEach(p=>{
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
-        ctx.shadowBlur = 50;
-        ctx.shadowColor = 'rgba(255,255,255,0.2)';
-        ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-        ctx.fill();
-        p.y -= p.speed;
-        p.x += Math.sin(Date.now()/1000+p.y)*0.2;
-        if(p.y + p.radius < 0){
-            p.y = canvas.height + p.radius;
-            p.x = Math.random()*canvas.width;
-        }
-    });
-    requestAnimationFrame(animateSmoke);
-}
-animateSmoke();
-window.addEventListener('resize', ()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
-
 // Calculator function
 function calculateCalories(){
     const sex = document.getElementById('sex').value;
@@ -219,6 +182,7 @@ function calculateCalories(){
     const bmiPercent = Math.min((bmi/40)*100,100);
     document.getElementById('bmiFill').style.width = bmiPercent + '%';
 
+    // Show results and form
     document.getElementById('results').style.display='block';
     document.getElementById('emailCapture').style.display='block';
 }
