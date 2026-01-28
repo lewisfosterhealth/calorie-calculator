@@ -14,6 +14,26 @@ body {
     background: #0e0e0e;
     color: #f1f1f1;
     overflow-x: hidden;
+    position: relative;
+}
+
+/* Smoke background */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('https://i.ibb.co/xh1Z3R2/smoke.png') repeat;
+    background-size: cover;
+    opacity: 0.05;
+    animation: smokeMove 60s linear infinite;
+    z-index: 0;
+}
+@keyframes smokeMove {
+    0% { transform: translate(0,0) rotate(0deg); }
+    100% { transform: translate(50px,50px) rotate(360deg); }
 }
 
 /* Calculator container */
@@ -26,6 +46,7 @@ body {
     border-radius: 18px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.7);
     position: relative;
+    z-index: 1;
 }
 
 /* Premium shimmering main title */
@@ -93,6 +114,23 @@ button:hover {
     background: #111;
     border-radius: 14px;
     display: none;
+}
+
+/* BMI Bar */
+.bmi-bar {
+    margin-top: 15px;
+    height: 16px;
+    width: 100%;
+    background: #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.bmi-fill {
+    height: 100%;
+    width: 0%;
+    background: #1fcf8f;
+    border-radius: 8px;
+    transition: width 1s ease;
 }
 
 /* Email capture (Google Form embed) */
@@ -182,6 +220,7 @@ button:hover {
 <div class="results" id="results">
 <p><strong>Maintenance Calories:</strong> <span id="maint"></span> kcal/day</p>
 <p><strong>Target Calories:</strong> <span id="target"></span> kcal/day</p>
+<div class="bmi-bar"><div id="bmiFill" class="bmi-fill"></div></div>
 </div>
 
 <!-- Email capture -->
@@ -217,6 +256,7 @@ function calculateCalories() {
         return;
     }
 
+    // BMR and calories
     let bmr = sex === 'male'
         ? (10 * weight + 6.25 * height - 5 * age + 5)
         : (10 * weight + 6.25 * height - 5 * age - 161);
@@ -230,7 +270,12 @@ function calculateCalories() {
     document.getElementById('maint').textContent = maintenance;
     document.getElementById('target').textContent = target;
 
-    // Show results and email capture
+    // Show BMI bar
+    const bmi = weight / ((height/100) ** 2);
+    const bmiPercent = Math.min((bmi/40)*100, 100); // Max width 100%
+    document.getElementById('bmiFill').style.width = bmiPercent + '%';
+
+    // Show results and form
     document.getElementById('results').style.display = 'block';
     document.getElementById('emailCapture').style.display = 'block';
 }
