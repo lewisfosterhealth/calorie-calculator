@@ -1,71 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lewis Foster Health Coach : Free Calorie Calculator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #121212;
+    color: #f0f0f0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 40px;
+    background: rgba(0,0,0,0.85);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+h1 {
+    text-align: center;
+    font-weight: 800;
+    font-size: 2.4rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #19bf85, #0f9d72, #19bf85);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #1c1c1c;
+    color: #f0f0f0;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 30px;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #19bf85, #0f9d72);
+    color: #000;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.results {
+    display: none;
+    margin-top: 30px;
+    padding: 25px;
+    background: #1a1a1a;
+    border-radius: 12px;
+}
+
+.bmi-bar {
+    margin-top: 12px;
+    height: 16px;
+    background: linear-gradient(
+        to right,
+        #f39c12 0%,
+        #f39c12 18.5%,
+        #2ecc71 18.5%,
+        #2ecc71 24.9%,
+        #f1c40f 24.9%,
+        #f1c40f 29.9%,
+        #e74c3c 29.9%,
+        #e74c3c 50%
+    );
+    border-radius: 10px;
+    position: relative;
+}
+
+.bmi-marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 24px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.footer-link {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footer-link a {
+    color: #19bf85;
+    text-decoration: none;
+    font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>Lewis Foster Health Coach : Free Calorie Calculator</h1>
+
+<label>Units</label>
+<select id="units" onchange="updateUnitLabels()">
+    <option value="metric">Metric (cm/kg)</option>
+    <option value="imperial">Imperial (ft/in & st/lb)</option>
+</select>
+
+<label>Gender at Birth</label>
+<select id="sex">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+</select>
+
+<label id="height-label">Height (cm)</label>
+<input type="number" id="height">
+
+<label id="weight-label">Weight (kg)</label>
+<input type="number" id="weight">
+
+<label>Activity Level</label>
+<select id="activity">
+    <option value="1.2">Sedentary</option>
+    <option value="1.375">Light</option>
+    <option value="1.55">Moderate</option>
+    <option value="1.725">Active</option>
+    <option value="1.9">Very Active</option>
+</select>
+
+<label>Goal</label>
+<select id="goal">
+    <option value="maintenance">Maintain Weight</option>
+    <option value="weight_loss_5">Lose 5%</option>
+    <option value="weight_loss_10">Lose 10%</option>
+    <option value="weight_loss_15">Lose 15%</option>
+    <option value="weight_gain_5">Gain 5%</option>
+    <option value="weight_gain_10">Gain 10%</option>
+    <option value="weight_gain_15">Gain 15%</option>
+</select>
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="results" id="results">
+    <p><strong>Maintenance Calories:</strong> <span id="maint"></span> kcal</p>
+    <p><strong>Target Calories:</strong> <span id="target"></span> kcal</p>
+    <p><strong>BMI:</strong> <span id="bmi"></span></p>
+
+    <div class="bmi-bar">
+        <div class="bmi-marker" id="marker"></div>
+    </div>
+</div>
+
+<div class="footer-link">
+    <a href="https://www.ebpt.co.uk" target="_blank">Lewis Foster Coach Website</a>
+</div>
+</div>
+
 <script>
-/* ===============================
-   CALORIE + BMI CALCULATOR
-   =============================== */
+function updateUnitLabels() {
+    const units = document.getElementById('units').value;
+    if (units === 'metric') {
+        document.getElementById('height-label').textContent = "Height (cm)";
+        document.getElementById('weight-label').textContent = "Weight (kg)";
+    } else {
+        document.getElementById('height-label').textContent = "Height (ft)";
+        document.getElementById('weight-label').textContent = "Weight (st)";
+    }
+}
 
-function calculateCalories() {
-    const sex = document.getElementById('sex').value;
-    const age = Number(document.getElementById('age').value);
-    const height = Number(document.getElementById('height').value);
-    const weight = Number(document.getElementById('weight').value);
-    const activity = Number(document.getElementById('activity').value);
+function calculate() {
+    let sex = document.getElementById('sex').value;
+    let height = +document.getElementById('height').value;
+    let weight = +document.getElementById('weight').value;
+    const activity = +document.getElementById('activity').value;
     const goal = document.getElementById('goal').value;
-    const rate = Number(document.getElementById('rate').value);
+    const units = document.getElementById('units').value;
 
-    if (!age || !height || !weight || age <= 0 || height <= 0 || weight <= 0) {
-        alert("Please enter valid positive numbers.");
+    if (!height || !weight) {
+        alert("Please fill in all fields");
         return;
     }
 
-    // BMR (Mifflin-St Jeor)
-    let bmr;
-    if (sex === "male") {
-        bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-    } else {
-        bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    // Convert imperial to metric if needed
+    if (units === 'imperial') {
+        height = height * 30.48; // ft to cm
+        weight = weight * 6.35029; // stones to kg
     }
+
+    let age = +document.getElementById('age').value;
+    if (!age) { alert("Please fill in age"); return; }
+
+    let bmr = sex === 'male'
+        ? (10 * weight + 6.25 * height - 5 * age + 5)
+        : (10 * weight + 6.25 * height - 5 * age - 161);
 
     const maintenance = Math.round(bmr * activity);
+
     let target = maintenance;
-
-    if (goal === "lose") target -= rate;
-    if (goal === "gain") target += rate;
-
-    // BMI
-    const bmiValue = (weight / Math.pow(height / 100, 2)).toFixed(1);
-
-    let bmiStatus = "";
-    let bmiClass = "";
-
-    if (bmiValue < 18.5) {
-        bmiStatus = "Underweight";
-        bmiClass = "underweight";
-    } else if (bmiValue < 25) {
-        bmiStatus = "Normal";
-        bmiClass = "normal";
-    } else if (bmiValue < 30) {
-        bmiStatus = "Overweight";
-        bmiClass = "overweight";
-    } else {
-        bmiStatus = "Obese";
-        bmiClass = "obese";
+    if (goal.includes("weight_loss")) {
+        const percent = parseInt(goal.split("_")[2]);
+        target = Math.round(maintenance * (1 - percent/100));
+    } else if (goal.includes("weight_gain")) {
+        const percent = parseInt(goal.split("_")[2]);
+        target = Math.round(maintenance * (1 + percent/100));
     }
 
-    // Output
-    document.getElementById("maint").textContent = maintenance;
-    document.getElementById("target").textContent = target;
-    document.getElementById("bmi").textContent = bmiValue;
+    const bmi = (weight / ((height/100)**2)).toFixed(1);
 
-    const bmiStatusEl = document.getElementById("bmi-status");
-    bmiStatusEl.textContent = bmiStatus;
-    bmiStatusEl.className = bmiClass;
+    document.getElementById('maint').textContent = maintenance;
+    document.getElementById('target').textContent = target;
+    document.getElementById('bmi').textContent = bmi;
 
-    // BMI BAR (0–50 scale)
-    const marker = document.getElementById("bmi-marker");
-    const percent = Math.min(Math.max((bmiValue / 50) * 100, 0), 100);
-    marker.style.left = `calc(${percent}% - 2px)`; 
+    const marker = document.getElementById('marker');
+    const percentBmi = Math.min(Math.max((bmi / 50) * 100, 0), 100);
+    marker.style.left = `calc(${percentBmi}% - 2px)`;
 
-    // Show results
-    document.getElementById("results").classList.add("show");
+    document.getElementById('results').style.display = 'block';
 }
 </script>
+
+</body>
+</html>
