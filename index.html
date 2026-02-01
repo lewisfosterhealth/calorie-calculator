@@ -4,74 +4,267 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calorie Calculator</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
-  h1 { text-align: center; }
-  label { display: block; margin-top: 10px; }
-  select, input { width: 100%; padding: 5px; margin-top: 5px; }
-  button { margin-top: 15px; padding: 10px; width: 100%; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-  button:hover { background-color: #45a049; }
-  .result { margin-top: 20px; font-weight: bold; }
-  .form-container { text-align: center; margin-bottom: 20px; }
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    color: #e5e7eb;
+  }
+
+  .page-wrap {
+    max-width: 820px;
+    margin: 40px auto;
+    padding: 24px;
+  }
+
+  .card {
+    background: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+  }
+
+  h1 {
+    text-align: center;
+    margin: 0 0 18px 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #f9fafb;
+  }
+
+  .subtext {
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+
+  .video-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #1f2937;
+    margin-bottom: 22px;
+  }
+
+  .video-wrap iframe {
+    width: 100%;
+    height: 360px;
+    display: block;
+  }
+
+  .form-embed {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #1f2937;
+    margin-bottom: 26px;
+    background: #020617;
+  }
+
+  .form-embed iframe {
+    width: 100%;
+    height: 900px;
+    display: block;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 10px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  select, input {
+    background: #020617;
+    border: 1px solid #1f2937;
+    color: #e5e7eb;
+    padding: 12px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+
+  select:focus, input:focus {
+    outline: none;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+    background: #020617;
+  }
+
+  button {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    transition: transform 0.08s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    box-shadow: 0 10px 20px rgba(34,197,94,0.25);
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  .results {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .result-box {
+    background: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .result-label {
+    font-size: 12px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #22c55e;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap { padding: 14px; margin: 20px auto; }
+    .card { padding: 18px; }
+    form { grid-template-columns: 1fr; }
+    .results { grid-template-columns: 1fr; }
+    .video-wrap iframe { height: 220px; }
+  }
 </style>
 </head>
 <body>
-<h1>Lewis Foster Calorie Calculator</h1>
 
-<!-- Video Embed -->
-<div style="text-align:center; margin-bottom:20px;">
-  <iframe width="560" height="315" 
-          src="https://www.youtube.com/embed/qhjrwOhsIy4?si=LA8C8hkTF1w7DMj2&amp;controls=0" 
-          title="YouTube video player" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          referrerpolicy="strict-origin-when-cross-origin" 
-          allowfullscreen>
-  </iframe>
+<div class="page-wrap">
+  <div class="card">
+
+    <h1>Calorie & BMI Calculator</h1>
+    <div class="subtext">Free tool by Lewis Foster Coaching</div>
+
+    <!-- Video -->
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/qhjrwOhsIy4?si=LA8C8hkTF1w7DMj2&amp;controls=0"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen></iframe>
+    </div>
+
+    <!-- Google Form -->
+    <div class="form-embed">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScdfL9GCQS6nyja0-XW1lOLiLWn8DgHlG1bqLcqAzDP4VIkHQ/viewform?embedded=true"
+        frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    </div>
+
+    <!-- Calculator -->
+    <form id="calcForm">
+      <div class="field">
+        <label>Gender at Birth</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Age</label>
+        <input type="number" id="age" min="1" required>
+      </div>
+
+      <div class="field">
+        <label>Height (cm)</label>
+        <input type="number" id="height" min="1" required>
+      </div>
+
+      <div class="field">
+        <label>Weight (kg)</label>
+        <input type="number" id="weight" min="1" required>
+      </div>
+
+      <div class="field">
+        <label>Activity Level</label>
+        <select id="activity">
+          <option value="1.2">Sedentary</option>
+          <option value="1.375">Light</option>
+          <option value="1.55">Moderate Active</option>
+          <option value="1.725">Very Active</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Goal</label>
+        <select id="goal">
+          <option value="maintain">Maintain Weight</option>
+          <option value="lose">Lose Weight</option>
+          <option value="gain">Gain Weight</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="calculateCalories()">Calculate My Calories</button>
+    </form>
+
+    <div class="results">
+      <div class="result-box">
+        <div class="result-label">Maintenance</div>
+        <div class="result-value"><span id="maintenance">0</span> kcal</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Target</div>
+        <div class="result-value"><span id="target">0</span> kcal</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">BMI</div>
+        <div class="result-value"><span id="bmi">0</span></div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<!-- Google Form Embed -->
-<div class="form-container">
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScdfL9GCQS6nyja0-XW1lOLiLWn8DgHlG1bqLcqAzDP4VIkHQ/viewform?embedded=true" 
-          width="100%" 
-          height="900" 
-          frameborder="0" 
-          marginheight="0" 
-          marginwidth="0">Loading…</iframe>
-</div>
-
-<form id="calcForm">
-  <label>Gender at Birth</label>
-  <select id="gender">
-    <option value="male">Male</option>
-    <option value="female">Female</option>
-  </select>
-  <label>Age</label>
-  <input type="number" id="age" min="1" required>
-  <label>Height (cm)</label>
-  <input type="number" id="height" min="1" required>
-  <label>Weight (kg)</label>
-  <input type="number" id="weight" min="1" required>
-  <label>Activity Level</label>
-  <select id="activity">
-    <option value="1.2">Sedentary</option>
-    <option value="1.375">Light</option>
-    <option value="1.55">Moderate Active</option>
-    <option value="1.725">Very Active</option>
-  </select>
-  <label>Goal</label>
-  <select id="goal">
-    <option value="maintain">Maintain Weight</option>
-    <option value="lose">Lose Weight</option>
-    <option value="gain">Gain Weight</option>
-  </select>
-  <button type="button" onclick="calculateCalories()">Calculate</button>
-</form>
-<div class="result">
-  <p>Maintenance Calories: <span id="maintenance">0</span> kcal</p>
-  <p>Target Calories: <span id="target">0</span> kcal</p>
-  <p>BMI: <span id="bmi">0</span></p>
-</div>
 <script>
 function calculateCalories() {
   const gender = document.getElementById('gender').value;
@@ -81,7 +274,6 @@ function calculateCalories() {
   const activity = parseFloat(document.getElementById('activity').value);
   const goal = document.getElementById('goal').value;
 
-  // BMR Calculation (Mifflin-St Jeor Equation)
   let bmr;
   if (gender === 'male') {
     bmr = 10 * weight + 6.25 * height - 5 * age + 5;
@@ -107,5 +299,6 @@ function calculateCalories() {
   document.getElementById('bmi').textContent = bmi;
 }
 </script>
+
 </body>
 </html>
