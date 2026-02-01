@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lewis Foster Health Coach : Free Calorie Calculator</title>
+<title>Lewis Foster Health Coach</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
@@ -116,7 +116,7 @@ button {
 <body>
 
 <div class="container">
-<h1>Lewis Foster Health Coach : Free Calorie Calculator</h1>
+<h1>Lewis Foster Health Coach</h1>
 
 <label>Units</label>
 <select id="units" onchange="updateUnitLabels()">
@@ -129,6 +129,9 @@ button {
     <option value="male">Male</option>
     <option value="female">Female</option>
 </select>
+
+<label>Age</label>
+<input type="number" id="age">
 
 <label id="height-label">Height (cm)</label>
 <input type="number" id="height">
@@ -149,11 +152,11 @@ button {
 <select id="goal">
     <option value="maintenance">Maintain Weight</option>
     <option value="weight_loss_5">Lose 5%</option>
+    <option value="weight_loss_7.5">Lose 7.5%</option>
     <option value="weight_loss_10">Lose 10%</option>
-    <option value="weight_loss_15">Lose 15%</option>
     <option value="weight_gain_5">Gain 5%</option>
+    <option value="weight_gain_7.5">Gain 7.5%</option>
     <option value="weight_gain_10">Gain 10%</option>
-    <option value="weight_gain_15">Gain 15%</option>
 </select>
 
 <button onclick="calculate()">Calculate</button>
@@ -186,27 +189,23 @@ function updateUnitLabels() {
 }
 
 function calculate() {
-    let sex = document.getElementById('sex').value;
+    const sex = document.getElementById('sex').value;
     let height = +document.getElementById('height').value;
     let weight = +document.getElementById('weight').value;
+    const age = +document.getElementById('age').value;
     const activity = +document.getElementById('activity').value;
     const goal = document.getElementById('goal').value;
     const units = document.getElementById('units').value;
 
-    if (!height || !weight) {
-        alert("Please fill in all fields");
-        return;
-    }
+    if (!age || !height || !weight) { alert("Please fill in all fields"); return; }
 
-    // Convert imperial to metric if needed
+    // Convert imperial to metric
     if (units === 'imperial') {
-        height = height * 30.48; // ft to cm
-        weight = weight * 6.35029; // stones to kg
+        height = height * 30.48; // ft → cm
+        weight = weight * 6.35029; // st → kg
     }
 
-    let age = +document.getElementById('age').value;
-    if (!age) { alert("Please fill in age"); return; }
-
+    // BMR calculation
     let bmr = sex === 'male'
         ? (10 * weight + 6.25 * height - 5 * age + 5)
         : (10 * weight + 6.25 * height - 5 * age - 161);
@@ -215,11 +214,9 @@ function calculate() {
 
     let target = maintenance;
     if (goal.includes("weight_loss")) {
-        const percent = parseInt(goal.split("_")[2]);
-        target = Math.round(maintenance * (1 - percent/100));
+        target = Math.round(maintenance * (1 - parseFloat(goal.split("_")[2])/100));
     } else if (goal.includes("weight_gain")) {
-        const percent = parseInt(goal.split("_")[2]);
-        target = Math.round(maintenance * (1 + percent/100));
+        target = Math.round(maintenance * (1 + parseFloat(goal.split("_")[2])/100));
     }
 
     const bmi = (weight / ((height/100)**2)).toFixed(1);
@@ -229,8 +226,7 @@ function calculate() {
     document.getElementById('bmi').textContent = bmi;
 
     const marker = document.getElementById('marker');
-    const percentBmi = Math.min(Math.max((bmi / 50) * 100, 0), 100);
-    marker.style.left = `calc(${percentBmi}% - 2px)`;
+    marker.style.left = `calc(${Math.min(Math.max((bmi / 50) * 100, 0), 100)}% - 2px)`;
 
     document.getElementById('results').style.display = 'block';
 }
